@@ -8,11 +8,17 @@ use App\Models\Department;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use Filament\Forms\Components\TextInput;
 
 class DepartmentResource extends Resource
 {
@@ -29,13 +35,9 @@ class DepartmentResource extends Resource
     {
         return $form
             ->schema([
-                Repeater::make('members')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                    ])
-
             ]);
     }
 
@@ -68,6 +70,22 @@ class DepartmentResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+
+            ->schema([
+                Section::make('Department Info')
+                    ->schema([
+                        TextEntry::make('name')->label('Department Name'),
+                        TextEntry::make('employees_count')
+                            ->state(function (Model $record): int {
+                                return $record->employees()->count();
+                            }),
+                    ])->columns(2),
+
             ]);
     }
 

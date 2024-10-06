@@ -161,7 +161,11 @@ class EmployeeResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('department')
+                    ->relationship('department', 'name')
+                ->searchable()
+                ->preload()
+                ->label('Filter by Department'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

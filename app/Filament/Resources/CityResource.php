@@ -7,11 +7,14 @@ use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Infolist;
 
 class CityResource extends Resource
 {
@@ -32,7 +35,6 @@ class CityResource extends Resource
                 Forms\Components\Select::make('state_id')
                     ->relationship('state', 'name')
                     ->searchable()
-                    ->multiple()
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('name')
@@ -73,6 +75,21 @@ class CityResource extends Resource
                 ]),
             ]);
     }
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+
+            ->schema([
+                Section::make('State Info')
+                    ->schema([
+                        TextEntry::make('state.name')->label('State Name'),
+                        TextEntry::make('name')->label('State Name'),
+                    ])->columns(2),
+
+            ]);
+    }
+
+
 
     public static function getRelations(): array
     {
