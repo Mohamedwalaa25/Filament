@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
-use App\Filament\Resources\CategoryResource\RelationManagers\BlogRelationManager;
-use App\Models\Category;
+use App\Filament\Resources\GalleryResource\Pages;
+use App\Filament\Resources\GalleryResource\RelationManagers;
+use App\Filament\Resources\TagResource\RelationManagers\BlogRelationManager;
+use App\Models\Gallery;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,32 +14,26 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoryResource extends Resource
+class GalleryResource extends Resource
 {
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Gallery::class;
 
-    protected static ?string $navigationGroup= 'Products';
-
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Products';
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
-
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->required(),
+                Forms\Components\TextInput::make('blog_id')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('parent.name')
-                    ->relationship('parent', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->default(null),
+                    ->numeric(),
             ]);
     }
 
@@ -47,10 +41,9 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('parent.name')
-                    ->label('Sub Category')
+                Tables\Columns\ImageColumn::make('image')
+                ->sortable(),
+                Tables\Columns\TextColumn::make('blog.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -65,7 +58,6 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -77,19 +69,17 @@ class CategoryResource extends Resource
 
     public static function getRelations(): array
     {
-
-           return [
-               BlogRelationManager::class,
+        return [
+           BlogRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
+            'index' => Pages\ListGalleries::route('/'),
+            'create' => Pages\CreateGallery::route('/create'),
+            'edit' => Pages\EditGallery::route('/{record}/edit'),
         ];
     }
-
 }

@@ -70,15 +70,6 @@ class InformationResource extends Resource
                     ->label('Users')
                     ->required(),
 
-                Section::make('Image')
-
-                    ->schema([
-                        // ...
-                Forms\Components\FileUpload::make('image')
-                    ])->collapsible(),
-
-
-
             ]);
     }
 

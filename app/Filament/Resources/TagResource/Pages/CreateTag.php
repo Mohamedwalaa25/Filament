@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\TagResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\TagResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateUser extends CreateRecord
+class CreateTag extends CreateRecord
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = TagResource::class;
 
     protected function getRedirectUrl(): string
     {
@@ -16,6 +16,6 @@ class CreateUser extends CreateRecord
     }
     protected function getCreatedNotificationTitle(): ?string
     {
-        return 'User Created';
+        return 'Tags Created';
     }
 }

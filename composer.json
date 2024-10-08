@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^3.2.0",
+        "filament/spatie-laravel-media-library-plugin": "^3.2",
         "filament/tables": "^3.2",
         "flowframe/laravel-trend": "^0.3.0",
         "laravel/framework": "^11.9",

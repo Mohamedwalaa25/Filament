@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -20,9 +21,13 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup= 'Task Manger';
+    protected static ?string $navigationGroup= 'Employee Management';
 
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -38,6 +43,11 @@ class UserResource extends Resource
                 TextInput::make('password')
                     ->password()
                     ->revealable(),
+
+                Select::make('role_id')
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload(),
 
 
             ]);
