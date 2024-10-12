@@ -20,10 +20,17 @@ class GalleryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Products';
+
+    /*
+     * This Gallery Resource is used to create multi images.
+     * Contain  Filed image, blog_id
+     * blog_id have relationship with blogs Table
+     * */
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -42,7 +49,7 @@ class GalleryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                ->sortable(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('blog.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -70,7 +77,7 @@ class GalleryResource extends Resource
     public static function getRelations(): array
     {
         return [
-           BlogRelationManager::class
+            BlogRelationManager::class
         ];
     }
 

@@ -14,6 +14,13 @@ class InftorationController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    /*
+    * endPoint for get all Informations
+    * url : {{url}}/api/inforations
+    * * Method : GET
+     * Resource idt title phone address social_media user_id
+    */
     public function index()
     {
         $informations = Information::all();
@@ -27,6 +34,17 @@ class InftorationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+    /*
+    * endPoint for Store Informations
+    * url : {{url}}/api/inforations
+     * Method : POST
+     *      * Resource idt title phone address social_media user_id
+
+     * StoreCategory Request Validation :
+     *    'name' => 'required|string|max:255',
+          'parent_id' => 'nullable|exists:categories,id',
+    */
     public function store(StoreIfromationRequest $request)
     {
         $validated = $request-> validated();
@@ -37,8 +55,16 @@ class InftorationController extends Controller
 
     }
 
+
+
     /**
-     * Display the specified resource.
+     * endPoint for Get 1 item from Informations
+     * get item form Id
+     * url : {{url}}/api/inforations/{id}
+     * Method : Get
+     *      * Resource idt title phone address social_media user_id
+
+
      */
 
     public function show($id)
@@ -54,8 +80,16 @@ class InftorationController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+
+     * endPoint for Update specified 1 item from Informations
+     * get item form Id
+     * url : {{url}}/api/inforations/{id}
+     * Method : Put
+     *      * Resource idt title phone address social_media user_id
+
+
      */
+
     public function update(Request $request, $id)
     {
 
@@ -71,7 +105,14 @@ class InftorationController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+
+     * endPoint for Delete specified 1 item from Informations
+     * get item form Id
+     * url : {{url}}/api/inforations/{id}
+     * Method : Delete
+     *      * Resource idt title phone address social_media user_id
+
+
      */
     public function destroy($id)
     {

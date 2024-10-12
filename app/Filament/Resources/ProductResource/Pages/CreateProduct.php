@@ -18,4 +18,7 @@ class CreateProduct extends CreateRecord
     {
         return 'Product Created';
     }
+
+
+
 }

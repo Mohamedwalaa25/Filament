@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -45,39 +46,83 @@ class ProductResource extends Resource
         return $form
             ->schema([
 
-                Section::make('Product Details')
-                    ->description('set the product details here')
-                    ->schema([
-                        Select::make('category_id')
-                            ->relationship('category', 'name')
-                            ->required(),
-                        Forms\Components\TextInput::make('title')
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                            ->required()
-                            ->maxLength(255),
+                Wizard::make([
+                    Wizard\Step::make('Select Category')
+                        ->schema([
+                            Select::make('category_id')
+                                ->relationship('category', 'name')
+                                ->required(),
+                        ]),
+                    Wizard\Step::make('Create Title')
+                        ->schema([
+                            Forms\Components\TextInput::make('title')
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                ->required()
+                                ->maxLength(255),
+                            Forms\Components\TextInput::make('slug'),
 
-                        Forms\Components\TextInput::make('slug'),
+                        ]),
 
-                        Forms\Components\RichEditor::make('description')
-                            ->columnSpanFull(),
+                    Wizard\Step::make('Create Description')
+                        ->schema([
+                            Forms\Components\RichEditor::make('description')
+                                ->columnSpanFull(),
+                        ]),
+                    Wizard\Step::make('Create Price')
+                        ->schema([
+                            Forms\Components\TextInput::make('price')
+                                ->required()
+                                ->numeric()
+                                ->minValue(0),
+                        ]),
+                    Wizard\Step::make('Create Image')
+                        ->schema([
+                            SpatieMediaLibraryFileUpload::make('image')
+                                ->collection('Products')
+                                ->multiple(),
+                        ]),
+                    Wizard\Step::make('Create Status')
+                        ->schema([
+                            Toggle::make('status')
+                        ]),
+                ])->columnSpanFull(),
 
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0),
+
+
+//                Section::make('Product Details')
+//                    ->description('set the product details here')
+//                    ->schema([
+//                        Select::make('category_id')
+//                            ->relationship('category', 'name')
+//                            ->required(),
+//                        Forms\Components\TextInput::make('title')
+//                            ->live(onBlur: true)
+//                            ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
+//                            ->required()
+//                            ->maxLength(255),
+
+//                        Forms\Components\TextInput::make('slug'),
+
+//                        Forms\Components\RichEditor::make('description')
+//                            ->columnSpanFull(),
+
+//                        Forms\Components\TextInput::make('price')
+//                            ->required()
+//                            ->numeric()
+//                            ->minValue(0),
 //
 //                        FileUpload::make('image')
 //                            ->directory('Products')
 //                            ->disk('public'),
 
+//
+//                        SpatieMediaLibraryFileUpload::make('image')
+//                            ->collection('Products')
+//
+//                            ->multiple(),
+//                        Toggle::make('status')->columnSpanFull()
 
-                        SpatieMediaLibraryFileUpload::make('image')
-                            ->collection('Products')
-
-                            ->multiple(),
-                        Toggle::make('status')->columnSpanFull()
-                    ])
 
                     ]);
     }
@@ -88,6 +133,8 @@ class ProductResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
+
+
                 Tables\Columns\TextColumn::make('price')
                     ->money()
                     ->sortable(),
@@ -114,6 +161,17 @@ class ProductResource extends Resource
                     ->collection('Products')
                     ->size('50px')
                     ->label('Image'),
+
+                Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+
+                Tables\Columns\TextColumn::make('description')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
 
                 Tables\Columns\TextColumn::make('created_at')

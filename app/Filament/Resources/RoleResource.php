@@ -22,7 +22,7 @@ class RoleResource extends Resource
     protected static ?string $navigationGroup= 'Employee Management';
 
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
 
     public static function form(Form $form): Form
     {
@@ -34,7 +34,7 @@ class RoleResource extends Resource
                     ->maxLength(255),
 
                 Select::make('permissions')
-                    ->options(Permission::all()->pluck('name', 'id'))
+                   ->relationship('permissions', 'name')
                     ->searchable()
                     ->multiple()
                     ->preload(),
@@ -50,6 +50,11 @@ class RoleResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('permissions.name')
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

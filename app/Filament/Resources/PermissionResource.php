@@ -19,7 +19,7 @@ class PermissionResource extends Resource
     protected static ?string $navigationGroup= 'Employee Management';
 
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-right-end-on-rectangle';
 
     public static function form(Form $form): Form
     {
@@ -41,7 +41,7 @@ class PermissionResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('role_id')
+                Tables\Columns\TextColumn::make('roles.name')
                     ->searchable()
                     ->sortable(),
 

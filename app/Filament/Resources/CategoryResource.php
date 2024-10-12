@@ -14,6 +14,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+
+/**
+ * This Category Resource is used to create, read, update, delete, and list categories.
+ * Contain  Filed name, parent_id
+
+ * parent_id have relationship with Same  Table and  used Form Repeater
+ */
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;

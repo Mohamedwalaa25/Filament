@@ -14,15 +14,17 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ToggleColumn;
+
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Repeater;
 
@@ -49,14 +51,14 @@ class BlogResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->required()
                             ->columnSpanFull(),
 
                         Toggle::make('status')
                             ->onColor('success')
                             ->offColor('danger')
-                        ->label('Publish Status'),
+                            ->label('Publish Status'),
 
 
                         Repeater::make('galleries')
@@ -97,12 +99,10 @@ class BlogResource extends Resource
                 ToggleColumn::make('status'),
 
                 Tables\Columns\ImageColumn::make('galleries.image')
-
                     ->circular()
                     ->stacked()
                     ->limit(1)
                     ->limitedRemainingText(),
-
 
 
                 Tables\Columns\TextColumn::make('category.name')
@@ -120,9 +120,24 @@ class BlogResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+            ])->defaultSort("name")
             ->filters([
-                //
+
+                Filter::make('Un Publish')
+                    ->query(fn (Builder $query): Builder => $query->where('status', 0)),
+
+
+                Filter::make('Publish')
+                    ->query(fn (Builder $query): Builder => $query->where('status', 1)),
+
+
+//                SelectFilter::make('status')
+//                    ->options([
+//                        1 => 'published',
+//                        0 => 'Un published',
+//                    ])
+
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -141,8 +156,6 @@ class BlogResource extends Resource
 
                     }),
 
-
-
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -154,7 +167,7 @@ class BlogResource extends Resource
     public static function getRelations(): array
     {
         return [
-           CategoryRelationManager::class,
+            CategoryRelationManager::class,
             RelationManagers\TagsRelationManager::class,
 
         ];
@@ -168,6 +181,7 @@ class BlogResource extends Resource
             'edit' => Pages\EditBlog::route('/{record}/edit'),
         ];
     }
+
     public function isReadOnly(): bool
     {
         return false;

@@ -10,26 +10,37 @@ use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
+
+    /*
+     * endPoint for get all categories
+     * url : {{url}}/api/categories
+     * * Method : GET
+     * Resource contain id  name parent_id
      */
     public function index()
     {
         $categories = Category::all();
 
-        if (!$categories <= 0){
+        if (!$categories <= 0) {
             return $this->sendError('No data Yet');
         }
 
         return $this->sendResponse(CategoryResource::collection($categories), 'All Categories');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+    /*
+    * endPoint for Store Category
+    * url :  {{url}}/api/categories
+     * Method : POST
+     * StoreCategory Request Validation :
+     *    'name' => 'required|string|max:255',
+          'parent_id' => 'nullable|exists:categories,id',
+         * Resource contain id  name parent_id
+    */
     public function store(StoreCategory $request)
     {
-        $validated = $request-> validated();
+        $validated = $request->validated();
 
 
         $category = Category::create($validated);
@@ -40,14 +51,21 @@ class CategoriesController extends Controller
     }
 
     /**
-     * Display the specified resource.
+
+     * endPoint for Get 1 item from Category
+     * get item form Id
+     * url : {{url}}/api/categories/{id}
+     * Method : Get
+     *      * Resource contain id  name parent_id
+
      */
+
     public function show($id)
     {
         $category = Category::find($id);
 
 
-        if (!$category){
+        if (!$category) {
             return $this->sendError('faild Category');
         }
         return $this->sendResponse(new CategoryResource($category), 'All Categories');
@@ -55,16 +73,22 @@ class CategoriesController extends Controller
     }
 
 
-
     /**
-     * Update the specified resource in storage.
+
+     * endPoint for Update specified 1 item from Category
+     * get item form Id
+     * url : {{url}}/api/categories/{id}
+     * Method : Put
+     *      * Resource contain id  name parent_id
+
      */
+
     public function update(StoreCategory $request, $id)
     {
-        $validated = $request-> validated();
+        $validated = $request->validated();
         $category = Category::find($id);
 
-        if (!$category){
+        if (!$category) {
             return $this->sendError('faild Category');
         }
 
@@ -76,13 +100,19 @@ class CategoriesController extends Controller
 
 
     /**
-     * Remove the specified resource from storage.
+
+     * endPoint for Delete specified 1 item from Category
+     * get item form Id
+     * url : {{url}}/api/categories/{id}
+     * Method : Delete
+     *      * Resource contain id  name parent_id
+
      */
     public function destroy($id)
     {
         $category = Category::find($id);
 
-        if (!$category){
+        if (!$category) {
             return $this->sendError('faild Category');
         }
 
