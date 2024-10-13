@@ -14,13 +14,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Mail;
 
-class AuthController extends Controller  implements HasMiddleware
+class AuthController extends Controller implements HasMiddleware
 {
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
+
+    // use HasMiddleware auth guard is api to check token
     public static function middleware(): array
     {
         return [
@@ -34,6 +36,12 @@ class AuthController extends Controller  implements HasMiddleware
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
+    /*url : {{url}}/api/auth/login
+    Method : POST
+    Body : email,password
+    Check Email , Password and user has OTP equal null to login and return token
+    */
     public function login()
     {
 
@@ -56,6 +64,15 @@ class AuthController extends Controller  implements HasMiddleware
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    /*
+     *  url : {{url}}/api/auth/register
+     *  Method : POST
+     *  Body : name,email,password
+     *  Check Email , Password and Send  OTP to Email with event and mail trap
+     *  Check Email For OTP
+     * return user data and token
+     * **/
+
     public function register(Request $request)
     {
 
@@ -95,6 +112,12 @@ class AuthController extends Controller  implements HasMiddleware
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
+    /*url : {{url}}/api/auth/logout
+    Method : POST
+    Body : no body
+    return message
+    */
     public function logout()
     {
         auth()->logout();
@@ -122,15 +145,26 @@ class AuthController extends Controller  implements HasMiddleware
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
+        $data=[
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
-        ]);
+        ];
+        return $this->sendResponse($data, 'Login Successfully');
+
     }
 
+
+    /*url : {{url}}/api/auth/verifyOTP
+    Method : POST
+    Body : otp_code
+    Check user has same OTP and otp_code IN table equal null to login and return user data
+    */
     public function verifyOTP(Request $request)
     {
+        $request->validate([
+            'otp_code' => 'required',
+        ]);
 
         $user = User::query()->where('otp', $request->otp_code)->first();
 
@@ -144,7 +178,17 @@ class AuthController extends Controller  implements HasMiddleware
         }
     }
 
-    public function forgot(Request $request) {
+
+    /*url : {{url}}/api/auth/forgot
+    Method : POST
+    Body : email
+    Check Email For codepassword and send codepassword to Email to reset password
+    */
+    public function forgot(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
 
         $user = User::query()->where('email', $request->email)->first();
         if ($user) {
@@ -155,7 +199,14 @@ class AuthController extends Controller  implements HasMiddleware
         return $this->sendResponse([], "Check Your Email");
     }
 
-    public function reset(Request $request) {
+
+    /*url : {{url}}/api/auth/reset
+    Method : POST
+    Body : password, password_confirmation,codepassword,email
+    Check Email and  codepassword  craeted to new password and Hashed password
+    */
+    public function reset(Request $request)
+    {
         $request->validate([
             'password' => 'required|string|min:6|confirmed',
             'codepassword' => 'required',
@@ -164,8 +215,9 @@ class AuthController extends Controller  implements HasMiddleware
         $user = User::query()->where('codepassword', $request->codepassword)->where('email', $request->email)->first();
         if ($user) {
             $user->password = Hash::make($request->password);
+            $user->codepassword = null;
             $user->save();
-        return $this->sendResponse([], "Reset Successfully");
+            return $this->sendResponse([], "Reset Successfully");
         }
         return $this->sendResponse([], "Code Wrong ");
 

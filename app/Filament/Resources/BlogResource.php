@@ -179,6 +179,8 @@ class BlogResource extends Resource
             'index' => Pages\ListBlogs::route('/'),
             'create' => Pages\CreateBlog::route('/create'),
             'edit' => Pages\EditBlog::route('/{record}/edit'),
+            'form' =>Pages\FormsBlogs::route('/form'),
+
         ];
     }
 

@@ -12,7 +12,8 @@ class Blog extends Model
     protected $fillable = [
         'name',
         'description',
-
+        "slug",
+        'status',
         "category_id",
     ];
 
@@ -26,7 +27,8 @@ class Blog extends Model
         return $this->belongsToMany(Tag::class);
     }
 
-    public function galleries(){
+    public function galleries()
+    {
         return $this->hasMany(Gallery::class);
     }
 
